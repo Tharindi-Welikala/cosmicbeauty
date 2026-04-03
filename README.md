@@ -9,7 +9,7 @@ A modern, full-stack beauty products e-commerce platform built with MERN stack.
 - **Product Catalog**: Browse, search, and filter beauty products
 - **Shopping Cart**: Persistent cart with price snapshots
 - **Order Management**: Track orders, request refunds
-- **Payment Processing**: Stripe integration for secure payments
+- **Payment Processing**: Stripe integration for secure payments (Stripe is running on test mode)
 - **Wishlist**: Save favorite products
 - **Address Management**: Add, edit, delete shipping addresses
 - **Help Desk**: Submit support tickets and track responses
