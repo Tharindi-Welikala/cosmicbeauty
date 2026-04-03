@@ -1,0 +1,538 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
+/* ── Checkbox / radio: never inherit input padding ───── */
+input[type="checkbox"],
+input[type="radio"] {
+  padding: 0;
+  margin: 0;
+  width: auto;
+  height: auto;
+}
+
+body {
+  margin: 0;
+  font-family: "DM Sans", "Segoe UI", Arial, sans-serif;
+  background: linear-gradient(180deg, #fff9fc 0%, #fff5fa 100%);
+  color: #2d2430;
+  line-height: 1.45;
+}
+#root {
+  min-height: 100vh;
+}
+.container {
+  width: min(1120px, 92%);
+  margin: 0 auto;
+}
+
+/* ── Header ─────────────────────────────────────────── */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgba(45, 36, 48, 0.95);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.85rem 0;
+}
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  position: relative;
+}
+.links {
+  display: flex;
+  gap: 0.85rem;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.links a,
+.brand {
+  color: #fff;
+  text-decoration: none;
+}
+.brand {
+  font-family: "Playfair Display", serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+.links a {
+  padding: 0.35rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+.links a:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+.navToggle {
+  display: none;
+  width: 42px;
+  height: 38px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 8px;
+  padding: 0.45rem 0.5rem;
+}
+.navToggle span {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background: #fff;
+  border-radius: 2px;
+  margin: 4px 0;
+}
+
+/* ── Layout ─────────────────────────────────────────── */
+main.container {
+  padding: 1.35rem 0 3rem;
+}
+.row {
+  display: flex;
+  gap: 0.6rem;
+  margin: 1rem 0;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.filters {
+  background: #fff;
+  border: 1px solid #f0dfe9;
+  border-radius: 14px;
+  padding: 0.75rem 0.85rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 6px 22px rgba(98, 48, 80, 0.06);
+}
+.row input {
+  flex: 1 1 180px;
+}
+.row input[type="checkbox"] {
+  flex: none;
+  width: 16px;
+  height: 16px;
+}
+.actionRow {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.checkLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: #4b3d4c;
+  white-space: nowrap;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.checkLabel input[type="checkbox"] {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  cursor: pointer;
+  accent-color: #d83788;
+}
+
+/* ── Product Grid ────────────────────────────────────── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.1rem;
+}
+
+/* ── Cards ───────────────────────────────────────────── */
+.card {
+  background: #fff;
+  border: 1px solid #f0dfe9;
+  border-radius: 14px;
+  padding: 1rem 1.05rem;
+  box-shadow: 0 8px 26px rgba(98, 48, 80, 0.08);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 34px rgba(98, 48, 80, 0.13);
+}
+.card h3 {
+  font-family: "Playfair Display", serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2d2430;
+  margin: 0.4rem 0 0.25rem;
+}
+
+/* All card text muted by default */
+.card p {
+  color: rgba(45, 36, 48, 0.5);
+  font-size: 0.875rem;
+  margin: 0.2rem 0;
+}
+
+/* Price: pink and bold */
+.card .price {
+  color: #c2417a;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+/* Cart item product name: darker so it's readable */
+.card .itemName {
+  color: #2d2430;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+/* ── Category badge ──────────────────────────────────── */
+.badge {
+  display: inline-block;
+  padding: 0.18rem 0.55rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  text-transform: capitalize;
+}
+.badge-skincare  { background: #fce8f3; color: #b03070; }
+.badge-makeup    { background: #fde8e8; color: #b03030; }
+.badge-haircare  { background: #e8f3fc; color: #2060a0; }
+.badge-fragrance { background: #f0e8fc; color: #6030a0; }
+.badge-body      { background: #e8fcf0; color: #207050; }
+.badge-default   { background: #f0dfe9; color: #6d2b5a; }
+
+.productImage {
+  width: 100%;
+  height: 190px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 0.8rem;
+  background: #f8edf3;
+}
+
+/* ── KPI Cards (Admin Dashboard) ─────────────────────── */
+.kpiCard {
+  background: #fff;
+  border: 1px solid #f0dfe9;
+  border-radius: 14px;
+  padding: 1.1rem 1.2rem;
+  box-shadow: 0 8px 26px rgba(98, 48, 80, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.kpiIcon {
+  font-size: 1.8rem;
+  line-height: 1;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.kpiIcon-sales   { background: #fce8f3; }
+.kpiIcon-orders  { background: #fde8e8; }
+.kpiIcon-users   { background: #e8f3fc; }
+.kpiIcon-stock   { background: #fff3e0; }
+.kpiLabel {
+  font-size: 0.8rem;
+  color: rgba(45, 36, 48, 0.5);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 0.2rem;
+}
+.kpiValue {
+  font-family: "Playfair Display", serif;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #2d2430;
+  line-height: 1.2;
+}
+
+/* ── Cart summary ────────────────────────────────────── */
+.cartSummary {
+  background: #fff;
+  border: 1px solid #f0dfe9;
+  border-radius: 14px;
+  padding: 1rem 1.2rem;
+  margin-top: 1rem;
+  box-shadow: 0 4px 16px rgba(98, 48, 80, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.cartSummary p {
+  color: rgba(45, 36, 48, 0.6);
+  font-size: 0.9rem;
+  margin: 0;
+}
+.cartSummary .cartTotal {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #2d2430;
+  border-top: 1px solid #f0dfe9;
+  padding-top: 0.5rem;
+  margin-top: 0.2rem;
+}
+
+/* ── Forms ───────────────────────────────────────────── */
+.form {
+  display: grid;
+  gap: 0.75rem;
+  width: min(100%, 440px);
+  background: white;
+  border: 1px solid #efdde7;
+  border-radius: 14px;
+  padding: 1.2rem;
+  box-shadow: 0 12px 30px rgba(110, 50, 89, 0.1);
+}
+.auth-form {
+  margin: clamp(1rem, 5vh, 3rem) auto;
+}
+
+/* ── Inputs / Buttons ────────────────────────────────── */
+input,
+button,
+select,
+textarea {
+  font: inherit;
+  padding: 0.65rem 0.75rem;
+  border-radius: 10px;
+}
+input,
+select,
+textarea {
+  border: 1px solid #dfc9d5;
+  background: #fff;
+}
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 2px solid #f2bfd8;
+  outline-offset: 1px;
+  border-color: #d05e99;
+}
+button {
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #e54a99, #d83788);
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+  transition: transform 0.12s ease, filter 0.12s ease;
+}
+button:hover {
+  filter: brightness(1.04);
+}
+button:active {
+  transform: translateY(1px);
+}
+.mutedBtn {
+  background: #f3e6ee;
+  color: #533b4b;
+}
+
+/* ── Typography ──────────────────────────────────────── */
+.muted {
+  color: #6c5b66;
+}
+.error {
+  color: #c62525;
+  margin: 0.15rem 0;
+}
+h1, h2, h3 {
+  margin-top: 0;
+}
+h1 {
+  font-family: "Playfair Display", serif;
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 600;
+  color: #251d28;
+}
+h2 {
+  font-family: "Playfair Display", serif;
+  font-size: clamp(1.25rem, 2.5vw, 1.7rem);
+  color: #251d28;
+}
+h3 {
+  font-family: "Playfair Display", serif;
+  color: #251d28;
+}
+p {
+  margin: 0.45rem 0;
+}
+
+/* ── Review box ──────────────────────────────────────── */
+.reviewBox {
+  margin-top: 0.6rem;
+  display: grid;
+  gap: 0.5rem;
+}
+
+/* ── Pagination ──────────────────────────────────────── */
+.paginationBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.8rem;
+  margin-top: 1rem;
+  padding: 0.85rem;
+  border: 1px solid #f0dfe9;
+  border-radius: 12px;
+  background: #fff;
+}
+.pageIndicator {
+  padding: 0.45rem 0.7rem;
+  border-radius: 8px;
+  border: 1px solid #e8d3e0;
+  color: #584151;
+  background: #fff8fc;
+}
+
+/* ── Mobile ──────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .container {
+    width: min(1120px, 94%);
+  }
+
+  /* Nav */
+  .nav {
+    align-items: center;
+    gap: 0.8rem;
+  }
+  .navToggle {
+    display: block;
+  }
+  .links {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: calc(100% + 8px);
+    width: min(240px, 90vw);
+    gap: 0.35rem;
+    justify-content: flex-start;
+    flex-direction: column;
+    background: rgba(45, 36, 48, 0.98);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    padding: 0.5rem;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+  }
+  .links.open {
+    display: flex;
+  }
+  .links a,
+  .links button {
+    width: 100%;
+    text-align: left;
+  }
+
+  /* Grid */
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Filters container */
+  .filters {
+    padding: 0.5rem 0.6rem;
+    margin-bottom: 0.7rem;
+  }
+
+  /* Compact filter inputs */
+  .filters input,
+  .filters select {
+    height: 2.2rem;
+    padding: 0 0.6rem;
+    font-size: 0.82rem;
+    line-height: 1;
+  }
+  .filters button {
+    height: 2.2rem;
+    padding: 0 0.75rem;
+    font-size: 0.82rem;
+    line-height: 1;
+  }
+
+  /* First row: stack search / category / brand vertically */
+  .row:first-child {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.4rem;
+    margin: 0.3rem 0;
+  }
+  .row:first-child input {
+    flex: unset;
+    width: 100%;
+  }
+
+  /* Second row: price + checkbox + buttons stay horizontal */
+  .row:last-child {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0.3rem 0;
+  }
+  .row:last-child input[type="number"] {
+    flex: 1 1 70px;
+    min-width: 0;
+  }
+
+  /* Checkbox */
+  .checkLabel {
+    font-size: 0.82rem;
+    gap: 0.25rem;
+  }
+  .checkLabel input[type="checkbox"] {
+    width: 14px !important;
+    height: 14px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    flex-shrink: 0;
+  }
+
+  /* Action row */
+  .actionRow {
+    width: 100%;
+  }
+  .actionRow button {
+    width: 100%;
+  }
+
+  /* Pagination */
+  .paginationBar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .pageIndicator {
+    text-align: center;
+  }
+
+  /* Forms */
+  .form,
+  .auth-form {
+    width: 100%;
+    margin: 0.75rem 0 1.25rem;
+  }
+
+  /* KPI cards stack on mobile */
+  .kpiCard {
+    padding: 0.85rem 1rem;
+  }
+  .kpiIcon {
+    width: 40px;
+    height: 40px;
+    font-size: 1.4rem;
+  }
+  .kpiValue {
+    font-size: 1.2rem;
+  }
+}

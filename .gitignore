@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Environment files (keep examples if added later)
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build output
+dist/
+build/
+coverage/
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# excluded files
+structure.txt
+srs_text.txt
+GlowCart_Requirements_Specification.docx
+GlowCart_Requirements_Specification.zip
+srs_extracted/
+
+# dev scripts
+backend/seedProducts.js
+backend/testEmail.js
