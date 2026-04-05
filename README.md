@@ -112,6 +112,16 @@ A modern, full-stack beauty products e-commerce platform built with MERN stack.
    - Frontend: http://localhost:5173
    - Backend API: http://localhost:5000/api
 
+## Test Accounts
+
+Run `node backend/seedAdmin.js` to create admin and support accounts.
+
+| Role     | Email                       | Password  |
+|----------|-----------------------------|-----------|
+| Admin    | admin@cosmicbeauty.com      | admin123  |
+| Support  | support@cosmicbeauty.com    | admin123  |
+| Customer | Register via /register page |           |
+
 ## Responsive Design
 
 - **Mobile-First**: Optimized for mobile devices
