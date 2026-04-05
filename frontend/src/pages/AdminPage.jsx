@@ -7,84 +7,12 @@ const EMPTY_PRODUCT = {
   stockQty: "", description: "", sku: "",
 };
 
-export default function AdminPage() {
-  const [kpi, setKpi] = useState(null);
-  const [report, setReport] = useState(null);
-  const [salesFilter, setSalesFilter] = useState({ from: "", to: "" });
-  const [activeSection, setActiveSection] = useState(null);
+// ── Section components defined OUTSIDE AdminPage ──────────────────────────────
+// Defining them inside AdminPage causes React to recreate the component type on
+// every render, fully unmounting and remounting them — resetting any typed input.
 
-  const [products, setProducts] = useState([]);
-  const [productForm, setProductForm] = useState(EMPTY_PRODUCT);
-  const [editingProduct, setEditingProduct] = useState(null); // holds product being edited
-
-  const [users, setUsers] = useState([]);
-  const [usersLoaded, setUsersLoaded] = useState(false);
-
-  useEffect(() => {
-    api.get("/admin/dashboard").then((res) => setKpi(res.data.data)).catch(() => {});
-    loadSales();
-    loadProducts();
-  }, []);
-
-  const loadSales = async (from, to) => {
-    try {
-      const params = {};
-      if (from) params.from = from;
-      if (to) params.to = to;
-      const res = await api.get("/admin/reports/sales", { params });
-      setReport(res.data.data);
-    } catch {}
-  };
-
-  const loadProducts = async () => {
-    try {
-      const res = await api.get("/products?limit=50");
-      setProducts(res.data.data.items);
-    } catch {}
-  };
-
-  const loadUsers = async () => {
-    try {
-      const res = await api.get("/admin/users");
-      setUsers(res.data.data.items);
-      setUsersLoaded(true);
-    } catch {}
-  };
-
-  // ── Navigation Cards ────────────────────────────────────────────────────────
-  const navigationCards = [
-    {
-      id: 'sales',
-      title: 'Sales Report',
-      icon: <TrendingUp size={24} />,
-      description: 'View detailed sales analytics and reports',
-      color: '#3b82f6'
-    },
-    {
-      id: 'stock',
-      title: 'Low Stock Alerts',
-      icon: <AlertTriangle size={24} />,
-      description: 'Monitor products with low inventory',
-      color: '#f59e0b'
-    },
-    {
-      id: 'products',
-      title: 'Product Management',
-      icon: <Package size={24} />,
-      description: 'Add, edit, and manage products',
-      color: '#10b981'
-    },
-    {
-      id: 'users',
-      title: 'User Management',
-      icon: <Users size={24} />,
-      description: 'Manage user accounts and permissions',
-      color: '#8b5cf6'
-    }
-  ];
-
-  // ── Section Components ───────────────────────────────────────────────────────
-  const SalesReportSection = () => (
+function SalesReportSection({ report, salesFilter, setSalesFilter, loadSales }) {
+  return (
     <div>
       <h3 style={{ marginTop: "2rem" }}><TrendingUp size={18} style={{ marginRight: "0.5rem" }} />Sales Report</h3>
       <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", alignItems: "flex-end", marginBottom: "1rem" }}>
@@ -107,14 +35,8 @@ export default function AdminPage() {
           />
         </label>
         <button onClick={() => loadSales(salesFilter.from, salesFilter.to)}>Apply</button>
-        <button
-          className="mutedBtn"
-          onClick={() => { setSalesFilter({ from: "", to: "" }); loadSales(); }}
-        >
-          Clear
-        </button>
+        <button className="mutedBtn" onClick={() => { setSalesFilter({ from: "", to: "" }); loadSales(); }}>Clear</button>
       </div>
-
       {report && (
         <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", marginBottom: "1.5rem" }}>
           <div className="kpiCard" style={{ minWidth: 160 }}>
@@ -129,8 +51,10 @@ export default function AdminPage() {
       )}
     </div>
   );
+}
 
-  const LowStockSection = () => (
+function LowStockSection({ report }) {
+  return (
     <div>
       {report && (
         <>
@@ -145,9 +69,7 @@ export default function AdminPage() {
                   <div>
                     <div className="kpiLabel">Low Stock</div>
                     <div className="kpiValue" style={{ fontSize: "1rem" }}>{p.name}</div>
-                    <div style={{ fontSize: "0.8rem", color: "#c2417a", fontWeight: 600 }}>
-                      {p.stockQty} remaining
-                    </div>
+                    <div style={{ fontSize: "0.8rem", color: "#c2417a", fontWeight: 600 }}>{p.stockQty} remaining</div>
                   </div>
                 </article>
               ))}
@@ -157,13 +79,16 @@ export default function AdminPage() {
       )}
     </div>
   );
+}
 
-  const ProductsSection = () => (
+function ProductsSection({ products, productForm, setProductForm, editingProduct, saveProduct, cancelEdit, startEdit, deleteProduct }) {
+  return (
     <div>
       <h3 id="product-form" style={{ marginTop: "2rem" }}>
-        {editingProduct ? <><Edit size={18} style={{ marginRight: "0.5rem" }} />Edit Product</> : <><Plus size={18} style={{ marginRight: "0.5rem" }} />Add Product</>}
+        {editingProduct
+          ? <><Edit size={18} style={{ marginRight: "0.5rem" }} />Edit Product</>
+          : <><Plus size={18} style={{ marginRight: "0.5rem" }} />Add Product</>}
       </h3>
-
       <div className="form">
         {[
           { key: "name", label: "Name" },
@@ -175,45 +100,22 @@ export default function AdminPage() {
             key={key}
             placeholder={label}
             value={productForm[key]}
-            onChange={(e) => setProductForm({ ...productForm, [key]: e.target.value })}
+            onChange={(e) => setProductForm((f) => ({ ...f, [key]: e.target.value }))}
           />
         ))}
-        <input
-          placeholder="Price"
-          type="number"
-          min="0"
-          value={productForm.price}
-          onChange={(e) => setProductForm({ ...productForm, price: e.target.value })}
-        />
-        <input
-          placeholder="Stock Qty"
-          type="number"
-          min="0"
-          value={productForm.stockQty}
-          onChange={(e) => setProductForm({ ...productForm, stockQty: e.target.value })}
-        />
-        <textarea
-          placeholder="Description"
-          value={productForm.description}
-          onChange={(e) => setProductForm({ ...productForm, description: e.target.value })}
-        />
+        <input placeholder="Price" type="number" min="0" value={productForm.price}
+          onChange={(e) => setProductForm((f) => ({ ...f, price: e.target.value }))} />
+        <input placeholder="Stock Qty" type="number" min="0" value={productForm.stockQty}
+          onChange={(e) => setProductForm((f) => ({ ...f, stockQty: e.target.value }))} />
+        <textarea placeholder="Description" value={productForm.description}
+          onChange={(e) => setProductForm((f) => ({ ...f, description: e.target.value }))} />
         <div style={{ display: "flex", gap: "0.5rem" }}>
-          <button onClick={saveProduct}>
-            {editingProduct ? "Update Product" : "Add Product"}
-          </button>
-          {editingProduct && (
-            <button
-              onClick={cancelEdit}
-              className="mutedBtn"
-            >
-              Cancel
-            </button>
-          )}
+          <button onClick={saveProduct}>{editingProduct ? "Update Product" : "Add Product"}</button>
+          {editingProduct && <button onClick={cancelEdit} className="mutedBtn">Cancel</button>}
         </div>
       </div>
 
       <h3 style={{ marginTop: "2rem" }}><Package size={18} style={{ marginRight: "0.5rem" }} />Products</h3>
-
       <div className="grid">
         {products.map((p) => (
           <article key={p._id} className="kpiCard">
@@ -224,30 +126,20 @@ export default function AdminPage() {
               <div style={{ fontSize: "0.8rem" }}>Stock: {p.stockQty}</div>
             </div>
             <div style={{ display: "flex", gap: "0.4rem", marginTop: "0.5rem" }}>
-              <button
-                onClick={() => startEdit(p)}
-                style={{ fontSize: "0.82rem" }}
-              >
-                Edit
-              </button>
-              <button
-                onClick={() => deleteProduct(p._id)}
-                className="mutedBtn"
-                style={{ fontSize: "0.82rem" }}
-              >
-                Delete
-              </button>
+              <button onClick={() => startEdit(p)} style={{ fontSize: "0.82rem" }}>Edit</button>
+              <button onClick={() => deleteProduct(p._id)} className="mutedBtn" style={{ fontSize: "0.82rem" }}>Delete</button>
             </div>
           </article>
         ))}
       </div>
     </div>
   );
+}
 
-  const UsersSection = () => (
+function UsersSection({ users, usersLoaded, loadUsers, toggleUserStatus }) {
+  return (
     <div>
       <h3 style={{ marginTop: "2rem" }}><Users size={18} style={{ marginRight: "0.5rem" }} />User Management</h3>
-
       {!usersLoaded ? (
         <button onClick={loadUsers}>Load Users</button>
       ) : (
@@ -294,21 +186,62 @@ export default function AdminPage() {
       )}
     </div>
   );
+}
+
+// ── Main component ─────────────────────────────────────────────────────────────
+
+export default function AdminPage() {
+  const [kpi, setKpi] = useState(null);
+  const [report, setReport] = useState(null);
+  const [salesFilter, setSalesFilter] = useState({ from: "", to: "" });
+  const [activeSection, setActiveSection] = useState(null);
+
+  const [products, setProducts] = useState([]);
+  const [productForm, setProductForm] = useState(EMPTY_PRODUCT);
+  const [editingProduct, setEditingProduct] = useState(null);
+
+  const [users, setUsers] = useState([]);
+  const [usersLoaded, setUsersLoaded] = useState(false);
+
+  useEffect(() => {
+    api.get("/admin/dashboard").then((res) => setKpi(res.data.data)).catch(() => {});
+    loadSales();
+    loadProducts();
+  }, []);
+
+  const loadSales = async (from, to) => {
+    try {
+      const params = {};
+      if (from) params.from = from;
+      if (to) params.to = to;
+      const res = await api.get("/admin/reports/sales", { params });
+      setReport(res.data.data);
+    } catch {}
+  };
+
+  const loadProducts = async () => {
+    try {
+      const res = await api.get("/products?limit=50");
+      setProducts(res.data.data.items);
+    } catch {}
+  };
+
+  const loadUsers = async () => {
+    try {
+      const res = await api.get("/admin/users");
+      setUsers(res.data.data.items);
+      setUsersLoaded(true);
+    } catch {}
+  };
 
   const startEdit = (p) => {
     setEditingProduct(p._id);
-    setProductForm({
-      name: p.name, brand: p.brand, category: p.category,
-      price: p.price, stockQty: p.stockQty, description: p.description, sku: p.sku,
-    });
-    setActiveSection('products');
-    window.scrollTo({ top: document.getElementById("product-form")?.offsetTop - 80, behavior: "smooth" });
+    setProductForm({ name: p.name, brand: p.brand, category: p.category, price: p.price, stockQty: p.stockQty, description: p.description, sku: p.sku });
+    setActiveSection("products");
+    setTimeout(() => document.getElementById("product-form")?.scrollIntoView({ behavior: "smooth" }), 50);
   };
 
-  const cancelEdit = () => {
-    setEditingProduct(null);
-    setProductForm(EMPTY_PRODUCT);
-  };
+  const cancelEdit = () => { setEditingProduct(null); setProductForm(EMPTY_PRODUCT); };
 
   const saveProduct = async () => {
     try {
@@ -335,8 +268,6 @@ export default function AdminPage() {
     }
   };
 
-  // ── User management ─────────────────────────────────────────────────────────
-
   const toggleUserStatus = async (id, currentStatus) => {
     try {
       await api.put(`/admin/users/${id}/status`, { isActive: !currentStatus });
@@ -346,141 +277,64 @@ export default function AdminPage() {
     }
   };
 
+  const navigationCards = [
+    { id: "sales", title: "Sales Report", icon: <TrendingUp size={24} />, description: "View detailed sales analytics and reports", color: "#3b82f6" },
+    { id: "stock", title: "Low Stock Alerts", icon: <AlertTriangle size={24} />, description: "Monitor products with low inventory", color: "#f59e0b" },
+    { id: "products", title: "Product Management", icon: <Package size={24} />, description: "Add, edit, and manage products", color: "#10b981" },
+    { id: "users", title: "User Management", icon: <Users size={24} />, description: "Manage user accounts and permissions", color: "#8b5cf6" },
+  ];
+
   return (
     <section>
       <h2>Admin Dashboard</h2>
 
-      {/* ── KPI Cards ─────────────────────────────────────────────────────── */}
       {kpi && (
         <div className="grid">
           <article className="kpiCard">
             <div className="kpiIcon kpiIcon-sales"><DollarSign size={24} /></div>
-            <div>
-              <div className="kpiLabel">Total Sales</div>
-              <div className="kpiValue">LKR {kpi.totalSales}</div>
-            </div>
+            <div><div className="kpiLabel">Total Sales</div><div className="kpiValue">LKR {kpi.totalSales}</div></div>
           </article>
           <article className="kpiCard">
             <div className="kpiIcon kpiIcon-orders"><Package size={24} /></div>
-            <div>
-              <div className="kpiLabel">Total Orders</div>
-              <div className="kpiValue">{kpi.totalOrders}</div>
-            </div>
+            <div><div className="kpiLabel">Total Orders</div><div className="kpiValue">{kpi.totalOrders}</div></div>
           </article>
           <article className="kpiCard">
             <div className="kpiIcon kpiIcon-users"><Users size={24} /></div>
-            <div>
-              <div className="kpiLabel">New Users (30d)</div>
-              <div className="kpiValue">{kpi.newUsersLast30Days}</div>
-            </div>
+            <div><div className="kpiLabel">New Users (30d)</div><div className="kpiValue">{kpi.newUsersLast30Days}</div></div>
           </article>
         </div>
       )}
 
-      {/* ── Navigation Cards ───────────────────────────────────────────────────── */}
       <div style={{ marginTop: "2rem" }}>
-        <div
-          className="grid"
-          style={{ gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}
-        >
+        <div className="grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
           {navigationCards.map((card) => (
             <article
               key={card.id}
               className="card"
-              style={{
-                cursor: "pointer",
-                transition: "all 0.3s ease",
-                border:
-                  activeSection === card.id
-                    ? "2px solid #c2417a"
-                    : "1px solid #e5e7eb",
-                background:
-                  activeSection === card.id
-                    ? "#fdf8fa"
-                    : "white",
-              }}
-              onClick={() =>
-                setActiveSection(activeSection === card.id ? null : card.id)
-              }
-              onMouseEnter={(e) => {
-                if (activeSection !== card.id) {
-                  e.currentTarget.style.boxShadow =
-                    "0 4px 12px rgba(0,0,0,0.1)";
-                  e.currentTarget.style.transform = "translateY(-2px)";
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (activeSection !== card.id) {
-                  e.currentTarget.style.boxShadow = "";
-                  e.currentTarget.style.transform = "";
-                }
-              }}
+              style={{ cursor: "pointer", transition: "all 0.3s ease", border: activeSection === card.id ? "2px solid #c2417a" : "1px solid #e5e7eb", background: activeSection === card.id ? "#fdf8fa" : "white" }}
+              onClick={() => setActiveSection(activeSection === card.id ? null : card.id)}
+              onMouseEnter={(e) => { if (activeSection !== card.id) { e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.1)"; e.currentTarget.style.transform = "translateY(-2px)"; } }}
+              onMouseLeave={(e) => { if (activeSection !== card.id) { e.currentTarget.style.boxShadow = ""; e.currentTarget.style.transform = ""; } }}
             >
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  marginBottom: "1rem",
-                }}
-              >
-                <div
-                  style={{
-                    width: "48px",
-                    height: "48px",
-                    borderRadius: "12px",
-                    background: `${card.color}15`,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    marginRight: "1rem",
-                  }}
-                >
+              <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem" }}>
+                <div style={{ width: "48px", height: "48px", borderRadius: "12px", background: `${card.color}15`, display: "flex", alignItems: "center", justifyContent: "center", marginRight: "1rem" }}>
                   <div style={{ color: card.color }}>{card.icon}</div>
                 </div>
-                <div>
-                  <h3
-                    style={{
-                      margin: 0,
-                      fontSize: "1.1rem",
-                      color: "#1f2937",
-                    }}
-                  >
-                    {card.title}
-                  </h3>
-                </div>
+                <h3 style={{ margin: 0, fontSize: "1.1rem", color: "#1f2937" }}>{card.title}</h3>
               </div>
-              <p
-                style={{
-                  margin: 0,
-                  color: "#6b7280",
-                  fontSize: "0.9rem",
-                  lineHeight: "1.4",
-                }}
-              >
-                {card.description}
-              </p>
-              <div
-                style={{
-                  marginTop: "0.75rem",
-                  fontSize: "0.85rem",
-                  color: card.color,
-                  fontWeight: 600,
-                }}
-              >
-                {activeSection === card.id
-                  ? "Click to collapse"
-                  : "Click to expand"}
+              <p style={{ margin: 0, color: "#6b7280", fontSize: "0.9rem", lineHeight: "1.4" }}>{card.description}</p>
+              <div style={{ marginTop: "0.75rem", fontSize: "0.85rem", color: card.color, fontWeight: 600 }}>
+                {activeSection === card.id ? "Click to collapse" : "Click to expand"}
               </div>
             </article>
           ))}
         </div>
       </div>
 
-      {/* ── Active Section Content ─────────────────────────────────────────────── */}
-      {activeSection === "sales" && <SalesReportSection />}
-      {activeSection === "stock" && <LowStockSection />}
-      {activeSection === "products" && <ProductsSection />}
-      {activeSection === "users" && <UsersSection />}
+      {activeSection === "sales" && <SalesReportSection report={report} salesFilter={salesFilter} setSalesFilter={setSalesFilter} loadSales={loadSales} />}
+      {activeSection === "stock" && <LowStockSection report={report} />}
+      {activeSection === "products" && <ProductsSection products={products} productForm={productForm} setProductForm={setProductForm} editingProduct={editingProduct} saveProduct={saveProduct} cancelEdit={cancelEdit} startEdit={startEdit} deleteProduct={deleteProduct} />}
+      {activeSection === "users" && <UsersSection users={users} usersLoaded={usersLoaded} loadUsers={loadUsers} toggleUserStatus={toggleUserStatus} />}
     </section>
   );
 }

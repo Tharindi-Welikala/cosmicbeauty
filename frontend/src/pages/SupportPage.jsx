@@ -4,16 +4,14 @@ import { api } from "../api";
 export default function SupportPage() {
   const [tickets, setTickets] = useState([]);
   const [reply, setReply] = useState({});
-  const [replyStatus, setReplyStatus] = useState({}); // tracks per-ticket status/error
+  const [replyStatus, setReplyStatus] = useState({});
   const [sending, setSending] = useState({});
 
   const load = async () => {
     try {
       const res = await api.get("/tickets");
       setTickets(res.data.data);
-    } catch {
-      // silently fail — tickets just won't show
-    }
+    } catch {}
   };
 
   useEffect(() => {
@@ -22,20 +20,14 @@ export default function SupportPage() {
 
   const sendReply = async (id) => {
     const message = reply[id]?.trim() || "Received. We are reviewing.";
-
     setSending((prev) => ({ ...prev, [id]: true }));
     setReplyStatus((prev) => ({ ...prev, [id]: null }));
 
     try {
-      await api.post(`/tickets/${id}/reply`, {
-        message,
-        status: "in_progress",
-      });
-
-      // Clear the textarea and show success
+      await api.post(`/tickets/${id}/reply`, { message, status: "in_progress" });
       setReply((prev) => ({ ...prev, [id]: "" }));
       setReplyStatus((prev) => ({ ...prev, [id]: { ok: true, msg: "Reply sent." } }));
-      load(); // refresh ticket list
+      load();
     } catch (err) {
       const msg = err.response?.data?.message || err.response?.data?.errors?.[0]?.msg || "Failed to send reply";
       setReplyStatus((prev) => ({ ...prev, [id]: { ok: false, msg } }));
@@ -48,9 +40,7 @@ export default function SupportPage() {
     <section>
       <h2>Support Desk</h2>
 
-      {tickets.length === 0 && (
-        <p className="muted">No tickets yet.</p>
-      )}
+      {tickets.length === 0 && <p className="muted">No tickets yet.</p>}
 
       <div className="grid">
         {tickets.map((t) => (
@@ -74,12 +64,18 @@ export default function SupportPage() {
 
             {/* Message thread */}
             <div style={{ background: "#f8f8f8", borderRadius: "6px", padding: "0.5rem 0.75rem", marginBottom: "0.75rem", maxHeight: 140, overflowY: "auto" }}>
-              {t.messages?.map((m, i) => (
-                <div key={i} style={{ marginBottom: "0.4rem", fontSize: "0.83rem" }}>
-                  <strong style={{ color: "#c2417a" }}>{m.by === t.customer?._id ? t.customer?.name : "Support"}:</strong>{" "}
-                  {m.text}
-                </div>
-              ))}
+              {t.messages?.map((m, i) => {
+                // FIX: compare as strings — ObjectId === ObjectId always false in JS
+                const isCustomer = m.by?.toString() === t.customer?._id?.toString();
+                return (
+                  <div key={i} style={{ marginBottom: "0.4rem", fontSize: "0.83rem" }}>
+                    <strong style={{ color: isCustomer ? "#333" : "#c2417a" }}>
+                      {isCustomer ? t.customer?.name || "Customer" : "Support"}:
+                    </strong>{" "}
+                    {m.text}
+                  </div>
+                );
+              })}
             </div>
 
             <textarea
