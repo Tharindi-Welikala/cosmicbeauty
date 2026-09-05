@@ -46,6 +46,60 @@ A modern, full-stack beauty products e-commerce platform built with MERN stack.
 - **Nodemailer** for email services
 - **bcrypt** for password hashing
 
+## Screenshots
+
+### Home Page
+![Home Page](./screenshots/main.png)
+
+### Product Listing
+![Products](./screenshots/products.png)
+
+### Product Details
+![Product Details](./screenshots/productManagement.png)
+
+### Cart
+![Cart](./screenshots/shoppingcart.png)
+
+### Checkout
+![Checkout](./screenshots/checkout.png)
+
+### Compare Products
+![Compare Products](./screenshots/compareProducts.png)
+
+### Admin Dashboard
+![Admin Dashboard](./screenshots/AdminDashboard.png)
+![Admin Dashboard 2](./screenshots/AdminDB.png)
+
+### Support
+![Supprt](./screenshots/supportDesk.png)
+
+### Order Tracking
+<p align="center">
+  <img src="./screenshots/orderTracking.png" alt="order tracking" width="48%">
+  <img src="./screenshots/orderTracking2.png" alt="order tracking 2" width="48%">
+</p>
+
+### Request Refund
+<p align="center">
+  <img src="./screenshots/Refund.png" alt="Request Refund" width="48%">
+  <img src="./screenshots/Refund2.png" alt="Request Refund 2" width="48%">
+</p>
+
+### Create Account
+![Create Account](./screenshots/createAcc.png)
+
+### Login
+![Login](./screenshots/Login.png)
+
+### Reset Password
+![Reset Password](./screenshots/ResetPw.png)
+
+### Email for Reset Password
+![Reset Password email](./screenshots/email.png)
+
+### Order Confirmation Email
+![Oder Confirmation Email](./screenshots/orderConf.png)
+
 ## Getting Started
 
 ### Prerequisites
