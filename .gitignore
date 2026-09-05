@@ -36,3 +36,7 @@ srs_extracted/
 # dev scripts
 backend/seedProducts.js
 backend/testEmail.js
+
+#tests
+backend/tests/
+backend/jest.config.js

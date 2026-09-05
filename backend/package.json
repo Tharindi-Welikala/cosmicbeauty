@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon src/server.js",
-    "start": "node src/server.js"
+    "start": "node src/server.js",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -23,6 +24,8 @@
     "stripe": "^16.5.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.4"
+    "jest": "^30.3.0",
+    "nodemon": "^3.1.4",
+    "supertest": "^7.2.2"
   }
 }
